@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f6f8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Link QR" />
+  <meta name="description" content="วางลิงก์ แล้วได้ QR Code ให้คนอื่นสแกนได้ทันที" />
+  <title>Link to QR</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111'/%3E%3Cpath fill='%23fff' d='M7 7h7v7H7zM18 7h7v7h-7zM7 18h7v7H7zM18 18h3v3h-3zM22 22h3v3h-3z'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>ลิงก์ → QR</h1>
+      <p>วางลิงก์ แล้วยื่นให้คนอื่นสแกนได้เลย</p>
+    </header>
+
+    <section class="card" id="card">
+      <div class="qr-box" id="qrBox" role="button" tabindex="0" aria-label="แตะเพื่อขยาย QR เต็มจอ">
+        <div class="empty" aria-hidden="true">
+          <div class="ghost">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20v.01M17 17h3v3"/></svg>
+          </div>
+          QR จะขึ้นตรงนี้ทันทีที่วางลิงก์
+        </div>
+        <div id="qr"></div>
+      </div>
+      <div class="label" id="label" hidden>
+        <div class="l-title" id="lTitle"></div>
+        <div class="l-desc" id="lDesc"></div>
+      </div>
+      <div class="meta" id="meta" aria-live="polite"></div>
+    </section>
+
+    <label class="field">
+      <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <input id="input" type="url" inputmode="url" enterkeyhint="done"
+             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+             placeholder="วางลิงก์ที่นี่" aria-label="ลิงก์" />
+      <button class="pill" id="pasteBtn" type="button">วาง</button>
+      <button class="pill icon-only" id="clearBtn" type="button" aria-label="ล้าง" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm3.7 12.3a1 1 0 0 1-1.4 1.4L12 13.4l-2.3 2.3a1 1 0 0 1-1.4-1.4l2.3-2.3-2.3-2.3a1 1 0 0 1 1.4-1.4l2.3 2.3 2.3-2.3a1 1 0 0 1 1.4 1.4L13.4 12l2.3 2.3Z"/></svg>
+      </button>
+    </label>
+
+    <div class="actions">
+      <button class="btn" id="fullBtn" type="button" disabled>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+        เต็มจอ
+      </button>
+      <button class="btn" id="labelBtn" type="button" disabled>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        <span id="labelBtnText">ใส่ชื่อ</span>
+        <span class="badge" id="labelBadge" hidden></span>
+      </button>
+      <div class="split" id="saveGroup">
+        <button class="btn main" id="saveBtn" type="button" disabled>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          บันทึก
+        </button>
+        <button class="btn side" id="shareBtn" type="button" aria-label="แชร์" title="แชร์" disabled hidden>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <footer>สร้างบนเครื่องคุณ · ไม่ส่งลิงก์ไปที่ไหน</footer>
+  </main>
+
+  <!-- Fullscreen -->
+  <div class="full" id="full" role="dialog" aria-modal="true" aria-label="QR เต็มจอ">
+    <div class="big" id="bigQr"></div>
+    <div class="f-title" id="fTitle" hidden></div>
+    <div class="f-desc" id="fDesc" hidden></div>
+    <div class="url" id="fullUrl"></div>
+    <div class="hint">แตะที่ใดก็ได้เพื่อปิด</div>
+  </div>
+
+  <!-- Label sheet -->
+  <div class="sheet-wrap" id="sheetWrap" aria-hidden="true">
+    <div class="backdrop" id="backdrop"></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="handle"></div>
+      <div class="sheet-head">
+        <h2 id="sheetTitle">ใส่ชื่อให้ QR</h2>
+        <button class="link-btn" id="labelClear" type="button">ล้าง</button>
+      </div>
+      <p class="sheet-sub">จะแสดงใต้ QR และติดไปในรูปที่บันทึก จะได้รู้ว่า QR นี้คืออะไร</p>
+      <label class="f">
+        <span>ชื่อ</span>
+        <input id="tIn" maxlength="60" enterkeyhint="next" autocomplete="off"
+               placeholder="เช่น เมนูร้าน, Wi-Fi ออฟฟิศ, ฟอร์มสมัครงาน" />
+      </label>
+      <label class="f">
+        <span>คำอธิบาย <em>(ไม่ใส่ก็ได้)</em></span>
+        <textarea id="dIn" maxlength="160" rows="3" enterkeyhint="done"
+                  placeholder="รายละเอียดสั้น ๆ เช่น สแกนเพื่อดูเมนูและสั่งอาหาร"></textarea>
+      </label>
+      <button class="btn primary block" id="sheetDone" type="button">เสร็จ</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
